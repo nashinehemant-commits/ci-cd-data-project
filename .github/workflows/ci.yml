@@ -1,4 +1,4 @@
-name: CI Pipeline
+name: CI-CD Pipeline
 
 on:
   push:
@@ -25,3 +25,14 @@ jobs:
       - name: Run tests
         run: |
           PYTHONPATH=. pytest tests/
+
+      - name: Install Databricks CLI
+        run: |
+          pip install databricks-cli
+
+      - name: Deploy to Databricks
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+        run: |
+          databricks workspace import_dir notebooks /Shared/ci_cd_project --overwrite
